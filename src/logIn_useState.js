@@ -1,18 +1,43 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { login } from "./utls";
 
 import "./styles.css";
-// use the class syntax to learn
 
-class LogInForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
+function LogInForm() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [isLogin, setIsLogin] = useState(false);
+
+  const onSubmit = async e => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    try {
+      await login({ username, password });
+      setIsLogin("true");
+    } catch (error) {
+      setError("Incorrect username or password!");
+    }
+    setIsLoading(false);
+  };
+  function logOut() {
+    setUsername("");
+    setPassword("");
+    setError("");
+    setIsLogin(false);
   }
-  render() {
-    return (
-      <div className="container">
+
+  return (
+    <div className="container">
+      {isLogin ? (
+        <>
+          <h1>Hello {username} </h1>
+          <button onClick={logOut}>Log Out</button>
+        </>
+      ) : (
         <form className="form" onSubmit={onSubmit}>
           <h2 className="loginTitle"> Please Login</h2>
           <input
@@ -33,9 +58,9 @@ class LogInForm extends Component {
           </button>
           {error && <p className="error">{error}</p>}
         </form>
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
 }
 
 function App() {
